@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full w-full overflow-hidden select-none">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>La Cabaña Matemática: Pirámide de Sumas</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700;800;900&family=Quicksand:wght@600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --font-main: 'Fredoka', 'Quicksand', sans-serif;
+        }
+
+        /* Full Screen Background using user's custom image 'fondo.jpg' with fallback gradient */
+        body {
+            font-family: var(--font-main);
+            height: 100dvh;
+            width: 100vw;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+            touch-action: manipulation;
+            background: url('fondo.jpg') center/cover no-repeat fixed, linear-gradient(135deg, #1e293b, #0f172a);
+        }
+
+        /* Glassmorphism Dark Overlay Panels for Crisp Readability over image background */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 2px solid rgba(255, 255, 255, 0.22);
+            box-shadow: 0 10px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-panel-light {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+        }
+
+        /* Tactile 3D Buttons */
+        .btn-3d {
+            transition: all 0.12s cubic-bezier(0.34, 1.56, 0.64, 1);
+            user-select: none;
+        }
+        .btn-3d:active {
+            transform: translateY(3px) scale(0.97);
+        }
+
+        .btn-emerald {
+            background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+            color: #022c22;
+            box-shadow: 0 5px 0 #047857, 0 8px 16px rgba(0,0,0,0.35);
+            border: 2px solid #a7f3d0;
+        }
+        .btn-emerald:hover {
+            background: linear-gradient(180deg, #6ee7b7 0%, #10b981 100%);
+        }
+
+        .btn-amber {
+            background: linear-gradient(180deg, #fcd34d 0%, #d97706 100%);
+            color: #451a03;
+            box-shadow: 0 5px 0 #b45309, 0 8px 16px rgba(0,0,0,0.35);
+            border: 2px solid #fef08a;
+        }
+        .btn-amber:hover {
+            background: linear-gradient(180deg, #fef08a 0%, #f59e0b 100%);
+        }
+
+        .btn-sky {
+            background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+            color: #0c4a6e;
+            box-shadow: 0 5px 0 #0369a1, 0 8px 16px rgba(0,0,0,0.35);
+            border: 2px solid #bae6fd;
+        }
+
+        /* Authentic Thatched Hut & Pyramid Block Styling */
+        .hut-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-height: 78dvh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            filter: drop-shadow(0 18px 25px rgba(0, 0, 0, 0.6));
+        }
+
+        /* Top Conical Straw Roof Cap */
+        .thatch-top-cap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            margin-bottom: -4px;
+            z-index: 15;
+        }
+
+        /* Golden Layered Thatched Roof Frame for Pyramid */
+        .pyramid-roof-bg {
+            background: linear-gradient(180deg, #fef08a 0%, #fde047 20%, #eab308 60%, #ca8a04 100%);
+            border-left: 6px solid #854d0e;
+            border-right: 6px solid #854d0e;
+            box-shadow: inset 0 3px 8px rgba(255, 255, 255, 0.6), inset 0 -4px 10px rgba(120, 53, 15, 0.5);
+        }
+
+        /* Scalloped Thatch Fringe / Alero de Paja */
+        .thatch-eaves-fringe {
+            width: 106%;
+            height: 22px;
+            margin-top: -6px;
+            margin-bottom: -2px;
+            z-index: 20;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+        }
+
+        /* Wooden Hut Body Base (Copied directly from textbook illustration) */
+        .hut-body-wooden {
+            width: 96%;
+            background: linear-gradient(90deg, #451a03 0%, #78350f 15%, #9a3412 50%, #78350f 85%, #451a03 100%);
+            border: 4px solid #361402;
+            border-radius: 0 0 24px 24px;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.5), 0 12px 24px rgba(0,0,0,0.5);
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 8px 16px 10px 16px;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        /* Wooden Vertical Planks Pattern overlay */
+        .hut-body-wooden::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(90deg, transparent, transparent 18px, rgba(0,0,0,0.25) 18px, rgba(0,0,0,0.25) 21px);
+            pointer-events: none;
+            border-radius: 0 0 20px 20px;
+        }
+
+        /* Corner Wooden Support Beams / Logs */
+        .wooden-log-pillar {
+            width: 16px;
+            height: 100%;
+            background: linear-gradient(180deg, #9a3412 0%, #451a03 100%);
+            border: 2px solid #290f02;
+            border-radius: 6px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.4);
+        }
+
+        /* Center Wooden Plank Door */
+        .hut-door {
+            width: clamp(52px, 12vw, 84px);
+            height: clamp(50px, 9vh, 76px);
+            background: linear-gradient(180deg, #78350f 0%, #451a03 100%);
+            border: 3px solid #290f02;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            box-shadow: inset 0 2px 6px rgba(254, 240, 138, 0.2), 0 4px 8px rgba(0,0,0,0.6);
+            display: flex;
+            justify-content: center;
+        }
+        .hut-door-planks {
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(90deg, transparent, transparent 10px, #290f02 10px, #290f02 12px);
+        }
+        .hut-door-knob {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            width: 7px;
+            height: 7px;
+            background: #f59e0b;
+            border-radius: 50%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.8);
+        }
+
+        /* Glowing Hut Windows with Crossbar (Exact textbook replica) */
+        .hut-window {
+            width: clamp(28px, 6vw, 42px);
+            height: clamp(28px, 6vw, 42px);
+            background: radial-gradient(circle, #ffffff 0%, #e0f2fe 60%, #38bdf8 100%);
+            border: 3px solid #451a03;
+            border-radius: 6px;
+            position: relative;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.8), inset 0 0 6px rgba(255,255,255,0.9);
+            margin-bottom: 8px;
+        }
+        .hut-window::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 3px; height: 100%;
+            background: #451a03;
+        }
+        .hut-window::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 0; transform: translateY(-50%);
+            width: 100%; height: 3px;
+            background: #451a03;
+        }
+
+        /* Pyramid Straw Blocks Styling */
+        .roof-block {
+            border-radius: clamp(0.6rem, 1.5vh, 1.1rem);
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-size: clamp(0.95rem, 2.6vh, 1.55rem);
+            font-weight: 900;
+        }
+
+        /* Fixed Numbers Block (Textbook Thatch Tile) */
+        .block-fixed {
+            background: linear-gradient(180deg, #fef08a 0%, #fde047 50%, #eab308 100%);
+            border: clamp(2px, 0.4vh, 3.5px) solid #78350f;
+            color: #361402;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.35), inset 0 2px 3px rgba(255,255,255,0.9);
+            text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+        }
+
+        /* Interactive Fillable Block (Bamboo Slot / White Straw) */
+        .block-input {
+            background: #ffffff;
+            border: clamp(2.5px, 0.45vh, 4px) solid #d97706;
+            color: #1e1b4b;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.25), 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .block-input:focus {
+            outline: none;
+            border-color: #0284c7;
+            box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.7), inset 0 2px 4px rgba(0,0,0,0.15);
+            transform: scale(1.06);
+            background: #f0f9ff;
+        }
+
+        .block-correct {
+            background: linear-gradient(180deg, #dcfce7 0%, #4ade80 60%, #16a34a 100%) !important;
+            border-color: #14532d !important;
+            color: #052e16 !important;
+            box-shadow: 0 0 18px rgba(74, 222, 128, 0.95) !important;
+        }
+
+        .block-error {
+            background: linear-gradient(180deg, #ffe4e6 0%, #f43f5e 60%, #e11d48 100%) !important;
+            border-color: #881337 !important;
+            color: #4c0519 !important;
+            animation: shake 0.35s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
+
+        #confetti-canvas {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body class="h-full w-full overflow-hidden flex flex-col justify-between items-center relative text-white p-2 sm:p-3">
+
+    <!-- Confetti Canvas -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- ================================================================= -->
+    <!-- 1. HEADER BAR (Ultra Minimal & Compact to maximize Hut size)     -->
+    <!-- ================================================================= -->
+    <header class="w-full max-w-5xl glass-panel rounded-2xl px-3 py-1.5 flex items-center justify-between shadow-xl flex-shrink-0 gap-2">
+        
+        <!-- Logo & Title -->
+        <div class="flex items-center space-x-2 cursor-pointer" id="logo-btn">
+            <div class="bg-gradient-to-tr from-amber-400 to-yellow-300 p-1.5 sm:p-2 rounded-xl shadow border border-yellow-200">
+                <span class="text-lg sm:text-2xl">🛖</span>
+            </div>
+            <div>
+                <h1 class="text-sm sm:text-lg font-black text-amber-300 leading-none drop-shadow">
+                    La Cabaña Matemática
+                </h1>
+                <p id="level-subtitle" class="text-[10px] sm:text-xs text-amber-100/90 font-bold">Pirámide de Sumas</p>
+            </div>
+        </div>
+
+        <!-- Mode & Level Pills -->
+        <div class="flex items-center space-x-1 sm:space-x-2">
+            <!-- Mode Switch Tabs -->
+            <div class="flex bg-slate-950/70 p-1 rounded-xl border border-amber-500/40 text-[11px] sm:text-xs font-bold">
+                <button id="tab-mission-btn" class="px-2.5 py-1 rounded-lg transition bg-amber-500 text-amber-950 shadow">
+                    🌴 Misiones
+                </button>
+                <button id="tab-infinite-btn" class="px-2.5 py-1 rounded-lg transition text-amber-200 hover:text-white">
+                    🎲 Infinito
+                </button>
+            </div>
+
+            <!-- Mission Buttons List -->
+            <div id="mission-controls" class="hidden sm:flex items-center space-x-1">
+                <!-- Mission pills dynamically rendered -->
+            </div>
+
+            <!-- Infinite Difficulty Selector -->
+            <div id="infinite-controls" class="hidden items-center space-x-1">
+                <button class="diff-btn px-2 py-0.5 rounded-lg text-xs font-bold border border-amber-500/50 bg-amber-950/80 text-amber-200" data-diff="easy">Fácil</button>
+                <button class="diff-btn px-2 py-0.5 rounded-lg text-xs font-bold border border-amber-500/50 bg-amber-950/80 text-amber-200" data-diff="medium">Medio</button>
+                <button class="diff-btn px-2 py-0.5 rounded-lg text-xs font-bold border border-amber-500/50 bg-amber-950/80 text-amber-200" data-diff="hard">Difícil</button>
+            </div>
+        </div>
+
+        <!-- Right Side Stats & Actions -->
+        <div class="flex items-center space-x-1.5 sm:space-x-2">
+            <!-- Stars -->
+            <div class="bg-amber-950/80 border border-amber-500/60 px-2 py-1 rounded-xl flex items-center space-x-1">
+                <span class="text-xs sm:text-sm">⭐</span>
+                <span id="star-count" class="font-extrabold text-amber-300 text-xs sm:text-sm">0</span>
+            </div>
+
+            <!-- Streak -->
+            <div class="bg-amber-950/80 border border-amber-500/60 px-2 py-1 rounded-xl flex items-center space-x-1">
+                <span class="text-xs sm:text-sm">🔥</span>
+                <span id="streak-count" class="font-extrabold text-orange-400 text-xs sm:text-sm">0</span>
+            </div>
+
+            <!-- Help Button -->
+            <button id="open-welcome-btn" class="bg-amber-800/80 hover:bg-amber-700 border border-amber-400/60 p-1.5 rounded-xl text-amber-200 shadow transition" title="Instrucciones">
+                <span class="text-xs sm:text-base">❓</span>
+            </button>
+
+            <!-- Sound Toggle -->
+            <button id="audio-toggle-btn" class="bg-amber-800/80 hover:bg-amber-700 border border-amber-400/60 p-1.5 rounded-xl text-amber-200 shadow transition" title="Audio">
+                <span id="audio-icon" class="text-xs sm:text-base">🔊</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Level Selector Row (Only visible on tiny screens) -->
+    <div id="mobile-mission-controls" class="sm:hidden w-full max-w-5xl flex items-center justify-center space-x-1 py-0.5 flex-shrink-0">
+        <!-- Rendered via JS -->
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- 2. MAIN GIANT CABAÑA & PYRAMID AREA (Authentic Indigenous Hut)    -->
+    <!-- ================================================================= -->
+    <main class="flex-1 w-full max-w-4xl flex flex-col items-center justify-center min-h-0 relative my-auto py-1">
+        
+        <!-- GIANT INDIGENOUS THATCHED HUT STRUCTURE -->
+        <div class="hut-container">
+            
+            <!-- 1. TOP CONICAL THATCH CAP WITH ROPE BINDING (Peak of the Hut) -->
+            <div class="thatch-top-cap">
+                <svg class="w-36 sm:w-56 h-10 sm:h-14" viewBox="0 0 220 50">
+                    <!-- Base Thatch Layer -->
+                    <path d="M 110 2 L 10 50 Q 110 40 210 50 Z" fill="#fde047" stroke="#854d0e" stroke-width="3.5"/>
+                    <path d="M 110 2 L 30 50 Q 110 42 190 50 Z" fill="#eab308" opacity="0.6"/>
+                    <!-- Traditional Rope Bindings -->
+                    <rect x="100" y="8" width="20" height="4" rx="2" fill="#78350f" />
+                    <rect x="94" y="16" width="32" height="5" rx="2" fill="#78350f" />
+                    <rect x="86" y="26" width="48" height="5" rx="2" fill="#78350f" />
+                    <!-- Top Straw Spire Ring -->
+                    <circle cx="110" cy="5" r="4" fill="#fef08a" stroke="#78350f" stroke-width="2"/>
+                </svg>
+            </div>
+
+            <!-- 2. THATCHED ROOF BODY CONTAINING THE 5-TIER PYRAMID -->
+            <div class="pyramid-roof-bg w-full flex-1 rounded-t-3xl p-2 sm:p-4 flex flex-col justify-evenly items-center gap-1.5 relative z-10">
+                <!-- Decorative Straw Texture Lines -->
+                <div class="absolute inset-0 opacity-15 pointer-events-none bg-[repeating-linear-gradient(180deg,#78350f,#78350f_2px,transparent_2px,transparent_12px)]"></div>
+
+                <!-- 5 Pyramid Rows -->
+                <div id="row-0" class="flex justify-center w-full gap-1.5 sm:gap-3 z-10"></div>
+                <div id="row-1" class="flex justify-center w-full gap-1.5 sm:gap-3 z-10"></div>
+                <div id="row-2" class="flex justify-center w-full gap-1.5 sm:gap-3 z-10"></div>
+                <div id="row-3" class="flex justify-center w-full gap-1.5 sm:gap-3 z-10"></div>
+                <div id="row-4" class="flex justify-center w-full gap-1.5 sm:gap-3 z-10"></div>
+            </div>
+
+            <!-- 3. SCALLOPED THATCH EAVES OVERHANG (Alero de Paja con Flecos) -->
+            <div class="thatch-eaves-fringe">
+                <svg class="w-full h-full" viewBox="0 0 600 24" preserveAspectRatio="none">
+                    <path d="M 0 0 Q 15 24 30 0 Q 45 24 60 0 Q 75 24 90 0 Q 105 24 120 0 Q 135 24 150 0 Q 165 24 180 0 Q 195 24 210 0 Q 225 24 240 0 Q 255 24 270 0 Q 285 24 300 0 Q 315 24 330 0 Q 345 24 360 0 Q 375 24 390 0 Q 405 24 420 0 Q 435 24 450 0 Q 465 24 480 0 Q 495 24 510 0 Q 525 24 540 0 Q 555 24 570 0 Q 585 24 600 0 Z" fill="#fde047" stroke="#854d0e" stroke-width="2"/>
+                </svg>
+            </div>
+
+            <!-- 4. RUSTIC WOODEN HUT BODY BASE (Exact replica of textbook illustration) -->
+            <div class="hut-body-wooden">
+                <!-- Left Log Pillar -->
+                <div class="wooden-log-pillar"></div>
+
+                <!-- Left Window (Glowing with crossbars) -->
+                <div class="hut-window"></div>
+
+                <!-- Center Wooden Plank Door -->
+                <div class="hut-door">
+                    <div class="hut-door-planks"></div>
+                    <div class="hut-door-knob"></div>
+                </div>
+
+                <!-- Right Window (Glowing with crossbars) -->
+                <div class="hut-window"></div>
+
+                <!-- Right Log Pillar -->
+                <div class="wooden-log-pillar"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ================================================================= -->
+    <!-- 3. ACTION CONTROLS & FEEDBACK BAR                                 -->
+    <!-- ================================================================= -->
+    <footer class="w-full max-w-2xl glass-panel p-2 rounded-2xl flex flex-col gap-1.5 flex-shrink-0 z-20">
+        
+        <div class="flex items-center justify-center gap-2">
+            <!-- Check Answers Button -->
+            <button id="check-btn" class="btn-3d btn-emerald rounded-2xl px-6 py-2.5 text-sm sm:text-base font-black flex-1 flex items-center justify-center space-x-2">
+                <span class="text-lg sm:text-xl">🔍</span>
+                <span class="uppercase tracking-wider">¡Comprobar Cabaña!</span>
+            </button>
+
+            <!-- Toggle On-screen Touch Keypad -->
+            <button id="toggle-keypad-btn" class="btn-3d btn-sky rounded-2xl px-4 py-2.5 text-sm sm:text-base font-extrabold flex items-center justify-center space-x-1" title="Teclado Numérico">
+                <span class="text-lg sm:text-xl">🔢</span>
+                <span class="hidden sm:inline">Teclado</span>
+            </button>
+        </div>
+
+        <!-- Feedback Banner Message -->
+        <div id="feedback-box" class="hidden w-full p-2 rounded-xl font-extrabold text-center text-xs sm:text-sm shadow-xl transition-all"></div>
+    </footer>
+
+    <!-- ================================================================= -->
+    <!-- 4. FLOATING NUMERIC TOUCH KEYPAD POPOVER                         -->
+    <!-- ================================================================= -->
+    <div id="virtual-keypad" class="hidden fixed bottom-16 right-4 z-40 w-64 glass-panel border-2 border-amber-400 p-3 rounded-3xl shadow-2xl flex flex-col gap-2">
+        <div class="flex items-center justify-between text-xs text-amber-300 font-bold px-1">
+            <span>Teclado Numérico</span>
+            <button id="close-keypad-btn" class="text-amber-300 hover:text-white font-black text-sm">✖</button>
+        </div>
+        <div class="grid grid-cols-3 gap-1.5">
+            <button class="keypad-num bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-lg py-2 rounded-xl shadow active:scale-95">1</button>
+            <button class="keypad-num bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-lg py-2 rounded-xl shadow active:scale-95">2</button>
+            <button class="keypad-num bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-lg py-2 rounded-xl shadow active:scale-95">3</button>
+            <button class="keypad-num bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-lg py-2 rounded-xl shadow active:scale-95">4</button>
+            <button class="keypad-num bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-lg py-2 rounded-xl shadow active:scale-95">5</button>
+            <button class="keypad-num bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-lg py-2 rounded-xl shadow active:scale-95">6</button>
+            <button class="keypad-num bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-lg py-2 rounded-xl shadow active:scale-95">7</button>
+            <button class="keypad-num bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-lg py-2 rounded-xl shadow active:scale-95">8</button>
+            <button class="keypad-num bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-lg py-2 rounded-xl shadow active:scale-95">9</button>
+            <button id="keypad-del" class="bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs py-2 rounded-xl shadow active:scale-95">⌫ Borrar</button>
+            <button class="keypad-num bg-amber-100 hover:bg-amber-200 text-amber-950 font-black text-lg py-2 rounded-xl shadow active:scale-95">0</button>
+            <button id="keypad-ok" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs py-2 rounded-xl shadow active:scale-95">OK ✔</button>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- 5. WELCOME & INSTRUCTIONS MODAL                                  -->
+    <!-- ================================================================= -->
+    <div id="welcome-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-3">
+        <div class="glass-panel bg-gradient-to-b from-slate-900/95 via-amber-950/95 to-slate-950/95 border-4 border-amber-500 max-w-md w-full rounded-3xl p-4 text-center shadow-2xl flex flex-col space-y-3 my-auto max-h-[92dvh]">
+            
+            <div class="space-y-1">
+                <span class="bg-amber-400 text-amber-950 px-3 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider">
+                    ¡Cálculo Mental Interactivo!
+                </span>
+                <h1 class="text-xl sm:text-2xl font-black text-amber-300 drop-shadow">
+                    La Cabaña Matemática
+                </h1>
+            </div>
+
+            <!-- Mathematical Rule Diagram -->
+            <div class="bg-slate-950/70 border border-amber-500/40 rounded-2xl p-3 flex flex-col items-center space-y-2">
+                <p class="text-xs text-amber-200 font-bold">
+                    Regla: Cada casilla es la SUMA de las dos que están justo debajo.
+                </p>
+
+                <div class="flex flex-col items-center gap-1 py-1">
+                    <div class="block-fixed w-20 h-9 rounded-xl flex items-center justify-center text-base font-black shadow animate-pulse">
+                        25
+                    </div>
+                    <div class="text-amber-300 text-[10px] font-bold flex items-center gap-1">
+                        <span>↙️</span><span class="bg-amber-500 text-amber-950 px-2 py-0.5 rounded-full">SUMA</span><span>↘️</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <div class="block-fixed w-16 h-8 rounded-xl flex items-center justify-center text-xs font-bold">10</div>
+                        <span class="text-amber-300 font-bold text-sm self-center">+</span>
+                        <div class="block-fixed w-16 h-8 rounded-xl flex items-center justify-center text-xs font-bold">15</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mode Selection -->
+            <div class="grid grid-cols-2 gap-2 text-left">
+                <button id="welcome-mode-mission" class="p-2.5 rounded-2xl border-2 border-amber-400 bg-amber-500/30 text-white font-bold flex flex-col items-center text-center transition">
+                    <span class="text-2xl">🌴</span>
+                    <span class="text-amber-300 text-xs font-extrabold">Misiones (1-6)</span>
+                    <span class="text-[9px] text-amber-100/70">Niveles de Libro</span>
+                </button>
+
+                <button id="welcome-mode-infinite" class="p-2.5 rounded-2xl border-2 border-emerald-500/50 bg-emerald-800/20 text-white font-bold flex flex-col items-center text-center transition opacity-80">
+                    <span class="text-2xl">🎲</span>
+                    <span class="text-emerald-300 text-xs font-extrabold">Modo Infinito</span>
+                    <span class="text-[9px] text-amber-100/70">Práctica Sin Fin</span>
+                </button>
+            </div>
+
+            <button id="start-game-btn" class="btn-3d btn-amber w-full py-3 text-base font-black uppercase tracking-wider flex items-center justify-center space-x-2 rounded-2xl">
+                <span>¡EMPEZAR A JUGAR!</span>
+                <span class="text-lg">🚀</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- 6. VICTORY POPUP MODAL                                            -->
+    <!-- ================================================================= -->
+    <div id="victory-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 hidden">
+        <div class="glass-panel bg-gradient-to-b from-amber-100 via-yellow-100 to-amber-200 border-4 border-amber-500 rounded-3xl p-5 max-w-xs w-full text-center shadow-2xl flex flex-col items-center space-y-3">
+            
+            <div class="text-5xl animate-bounce">🏆</div>
+            <h3 class="text-xl font-black text-amber-950">¡Cabaña Completada!</h3>
+            <div class="text-2xl flex justify-center space-x-1">⭐ ⭐ ⭐</div>
+
+            <p class="text-xs text-amber-900 font-bold">¡Excelente cálculo mental en la pirámide!</p>
+
+            <div class="flex gap-2 w-full pt-1">
+                <button id="modal-retry-btn" class="btn-3d btn-amber flex-1 py-2 text-xs rounded-xl">Repetir</button>
+                <button id="modal-next-btn" class="btn-3d btn-emerald flex-1 py-2 text-xs rounded-xl">Siguiente ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================================================================= -->
+    <!-- 7. GAME SCRIPT LOGIC                                             -->
+    <!-- ================================================================= -->
+    <script>
+        /* ------------------------------------------------------------------
+           CAMPAIGN MISSION DATA (Original 6 Levels from Worksheet)
+           ------------------------------------------------------------------ */
+        const MISSION_LEVELS = [
+            { id: 1, title: "Cabaña 1: Iniciación con Números Pequeños", base: [24, 36, 15, 25, 17], revealed: [[false],[false,false],[false,false,false],[false,false,false,false],[true,true,true,true,true]] },
+            { id: 2, title: "Cabaña 2: Huecos Intercalados", base: [32, 21, 15, 43, 3], revealed: [[false],[false,false],[false,false,false],[true,false,true,true],[true,false,false,true,false]] },
+            { id: 3, title: "Cabaña 3: Sumando Centenas", base: [115, 125, 100, 145, 65], revealed: [[true],[false,true],[false,false,false],[false,true,false,false],[true,false,false,true,true]] },
+            { id: 4, title: "Cabaña 4: Cientos Avanzados", base: [150, 120, 180, 210, 150], revealed: [[true],[true,false],[false,false,true],[false,false,true,false],[true,true,false,false,true]] },
+            { id: 5, title: "Cabaña 5: Cientos y Millares", base: [5100, 2600, 3500, 3900, 1800], revealed: [[false],[false,false],[false,false,false],[true,true,false,true],[false,true,false,true,false]] },
+            { id: 6, title: "Cabaña 6: Gran Desafío de Cifras", base: [1320, 1250, 1180, 1620, 1440], revealed: [[false],[false,false],[false,false,false],[false,false,false,false],[true,true,true,true,true]] }
+        ];
+
+        /* ------------------------------------------------------------------
+           STATE & AUDIO SYNTHESIZER
+           ------------------------------------------------------------------ */
+        let currentMode = 'mission';
+        let currentMissionIdx = 0;
+        let infiniteDifficulty = 'easy';
+
+        let solutionPyramid = [];
+        let revealedMask = [];
+        let activeInputCell = null;
+
+        let stars = 0;
+        let streak = 0;
+        let soundMuted = false;
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
+            }
+        }
+
+        function playSound(type) {
+            if (soundMuted) return;
+            initAudio();
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'click') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(420, now);
+                osc.frequency.exponentialRampToValueAtTime(840, now + 0.04);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.04);
+                osc.start(now); osc.stop(now + 0.04);
+            } else if (type === 'correct') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523, now);
+                osc.frequency.setValueAtTime(659, now + 0.08);
+                osc.frequency.setValueAtTime(783, now + 0.16);
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.2);
+                gain.gain.setValueAtTime(0.18, now);
+                gain.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            } else if (type === 'victory') {
+                [523, 659, 783, 1046].forEach((freq, i) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.type = 'triangle'; o.frequency.setValueAtTime(freq, now + i*0.08);
+                    g.gain.setValueAtTime(0.2, now + i*0.08);
+                    g.gain.linearRampToValueAtTime(0.01, now + i*0.08 + 0.25);
+                    o.start(now + i*0.08); o.stop(now + i*0.08 + 0.25);
+                });
+            }
+        }
+
+        /* ------------------------------------------------------------------
+           MATHEMATICAL COMPUTATIONS
+           ------------------------------------------------------------------ */
+        function computePyramid(baseArray) {
+            const pyramid = [];
+            pyramid[4] = [...baseArray];
+            for (let r = 3; r >= 0; r--) {
+                pyramid[r] = [];
+                for (let c = 0; c <= r; c++) {
+                    pyramid[r][c] = pyramid[r + 1][c] + pyramid[r + 1][c + 1];
+                }
+            }
+            return pyramid;
+        }
+
+        function formatNum(num) {
+            if (num === null || num === undefined || isNaN(num)) return '';
+            return num.toLocaleString('es-ES');
+        }
+
+        function parseInputVal(str) {
+            if (!str) return null;
+            const cleaned = str.toString().replace(/[\s\.,]/g, '');
+            const parsed = parseInt(cleaned, 10);
+            return isNaN(parsed) ? null : parsed;
+        }
+
+        function generateInfinitePyramid(diff) {
+            let minVal = 5, maxVal = 25, revealCount = 6;
+            if (diff === 'medium') { minVal = 40; maxVal = 180; revealCount = 5; }
+            else if (diff === 'hard') { minVal = 150; maxVal = 800; revealCount = 4; }
+
+            const base = Array.from({ length: 5 }, () => Math.floor(Math.random() * (maxVal - minVal + 1)) + minVal);
+            const sol = computePyramid(base);
+            const mask = Array.from({ length: 5 }, (_, r) => Array(r + 1).fill(false));
+
+            let revealedBase = 0;
+            while (revealedBase < 3) {
+                const idx = Math.floor(Math.random() * 5);
+                if (!mask[4][idx]) { mask[4][idx] = true; revealedBase++; }
+            }
+
+            let totalRevealed = revealedBase;
+            while (totalRevealed < revealCount) {
+                const r = Math.floor(Math.random() * 4);
+                const c = Math.floor(Math.random() * (r + 1));
+                if (!mask[r][c]) { mask[r][c] = true; totalRevealed++; }
+            }
+            return { sol, mask };
+        }
+
+        /* ------------------------------------------------------------------
+           RENDER PYRAMID GRID
+           ------------------------------------------------------------------ */
+        function loadLevel() {
+            hideFeedback();
+
+            if (currentMode === 'mission') {
+                const mission = MISSION_LEVELS[currentMissionIdx];
+                solutionPyramid = computePyramid(mission.base);
+                revealedMask = mission.revealed;
+                document.getElementById('level-subtitle').textContent = mission.title;
+            } else {
+                const generated = generateInfinitePyramid(infiniteDifficulty);
+                solutionPyramid = generated.sol;
+                revealedMask = generated.mask;
+                const labels = { easy: 'Fácil', medium: 'Medio', hard: 'Difícil' };
+                document.getElementById('level-subtitle').textContent = `Modo Infinito - ${labels[infiniteDifficulty]}`;
+            }
+
+            renderPyramidGrid();
+            updateMissionButtonsUI();
+        }
+
+        function renderPyramidGrid() {
+            for (let r = 0; r < 5; r++) {
+                const rowContainer = document.getElementById(`row-${r}`);
+                rowContainer.innerHTML = '';
+
+                for (let c = 0; c <= r; c++) {
+                    const isRevealed = revealedMask[r][c];
+                    const targetVal = solutionPyramid[r][c];
+
+                    const cellBox = document.createElement('div');
+                    cellBox.className = "flex items-center justify-center font-black relative flex-1 max-w-[110px]";
+                    cellBox.style.height = "clamp(34px, 6.2vh, 64px)";
+
+                    if (isRevealed) {
+                        cellBox.classList.add('block-fixed', 'roof-block');
+                        cellBox.textContent = formatNum(targetVal);
+                    } else {
+                        const input = document.createElement('input');
+                        input.type = 'text';
+                        input.inputMode = 'numeric';
+                        input.dataset.row = r;
+                        input.dataset.col = c;
+                        input.className = "block-input roof-block w-full h-full text-center font-black transition-all";
+                        input.placeholder = "?";
+
+                        input.addEventListener('focus', () => {
+                            activeInputCell = { row: r, col: c, element: input };
+                            playSound('click');
+                        });
+
+                        input.addEventListener('input', () => {
+                            input.classList.remove('block-error', 'block-correct');
+                        });
+
+                        input.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter') checkAnswers();
+                        });
+
+                        cellBox.appendChild(input);
+                    }
+                    rowContainer.appendChild(cellBox);
+                }
+            }
+        }
+
+        function checkAnswers() {
+            let allFilled = true;
+            let allCorrect = true;
+            let emptyCount = 0;
+
+            for (let r = 0; r < 5; r++) {
+                for (let c = 0; c <= r; c++) {
+                    if (!revealedMask[r][c]) {
+                        const inputEl = document.querySelector(`input[data-row="${r}"][data-col="${c}"]`);
+                        if (inputEl) {
+                            const userVal = parseInputVal(inputEl.value);
+                            const targetVal = solutionPyramid[r][c];
+
+                            if (userVal === null) {
+                                allFilled = false;
+                                emptyCount++;
+                                inputEl.classList.remove('block-correct', 'block-error');
+                            } else if (userVal === targetVal) {
+                                inputEl.classList.add('block-correct');
+                                inputEl.classList.remove('block-error');
+                            } else {
+                                allCorrect = false;
+                                inputEl.classList.add('block-error');
+                                inputEl.classList.remove('block-correct');
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (emptyCount > 0 && allCorrect) {
+                playSound('click');
+                showFeedback('⚠️ Rellena todas las casillas antes de comprobar.', 'amber');
+                return;
+            }
+
+            if (allCorrect && allFilled) {
+                playSound('victory');
+                triggerConfetti();
+                streak++;
+                stars += 3;
+                updateStatsUI();
+                showVictoryModal();
+            } else {
+                playSound('error');
+                streak = 0;
+                updateStatsUI();
+                showFeedback('❌ Hay casillas incorrectas. Revisa las marcadas en rojo.', 'rose');
+            }
+        }
+
+        function showFeedback(msg, color) {
+            const box = document.getElementById('feedback-box');
+            box.textContent = msg;
+            box.className = `w-full p-2 rounded-xl font-extrabold text-center text-xs sm:text-sm shadow-xl transition-all block `;
+
+            if (color === 'amber') box.classList.add('bg-amber-100', 'text-amber-950', 'border-2', 'border-amber-400');
+            else if (color === 'rose') box.classList.add('bg-rose-100', 'text-rose-950', 'border-2', 'border-rose-400');
+        }
+
+        function hideFeedback() {
+            document.getElementById('feedback-box').className = 'hidden';
+        }
+
+        function updateStatsUI() {
+            document.getElementById('star-count').textContent = stars;
+            document.getElementById('streak-count').textContent = streak;
+        }
+
+        function updateMissionButtonsUI() {
+            const container = document.getElementById('mission-controls');
+            const mobileContainer = document.getElementById('mobile-mission-controls');
+            container.innerHTML = '';
+            mobileContainer.innerHTML = '';
+
+            MISSION_LEVELS.forEach((m, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `px-2 py-0.5 rounded-md text-[11px] font-bold border transition ${
+                    idx === currentMissionIdx
+                        ? 'bg-amber-400 text-amber-950 border-amber-200 shadow'
+                        : 'bg-amber-950/80 text-amber-200 border-amber-700/60 hover:bg-amber-800'
+                }`;
+                btn.textContent = `${m.id}`;
+                btn.addEventListener('click', () => {
+                    playSound('click');
+                    currentMissionIdx = idx;
+                    loadLevel();
+                });
+                container.appendChild(btn);
+
+                const mobileBtn = btn.cloneNode(true);
+                mobileBtn.addEventListener('click', () => {
+                    playSound('click');
+                    currentMissionIdx = idx;
+                    loadLevel();
+                });
+                mobileContainer.appendChild(mobileBtn);
+            });
+        }
+
+        /* ------------------------------------------------------------------
+           CONFETTI CELEBRATION ENGINE
+           ------------------------------------------------------------------ */
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const colors = ['#fde047', '#4ade80', '#38bdf8', '#f43f5e', '#fb923c'];
+
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: canvas.width / 2, y: canvas.height / 2,
+                    vx: (Math.random() - 0.5) * 16, vy: (Math.random() - 0.7) * 16,
+                    size: Math.random() * 8 + 4, color: colors[Math.floor(Math.random() * colors.length)]
+                });
+            }
+
+            const start = Date.now();
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                let alive = false;
+                particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy; p.vy += 0.3;
+                    if (p.y < canvas.height) alive = true;
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                });
+                if (alive && Date.now() - start < 3000) requestAnimationFrame(render);
+                else ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            render();
+        }
+
+        /* ------------------------------------------------------------------
+           MODAL & EVENT BINDINGS
+           ------------------------------------------------------------------ */
+        function showVictoryModal() { document.getElementById('victory-modal').classList.remove('hidden'); }
+        function hideVictoryModal() { document.getElementById('victory-modal').classList.add('hidden'); }
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Welcome Screen mode selectors
+            const wMissionBtn = document.getElementById('welcome-mode-mission');
+            const wInfiniteBtn = document.getElementById('welcome-mode-infinite');
+
+            wMissionBtn.addEventListener('click', () => {
+                playSound('click'); currentMode = 'mission';
+                wMissionBtn.className = "p-2.5 rounded-2xl border-2 border-amber-400 bg-amber-500/40 text-white font-bold flex flex-col items-center text-center transition";
+                wInfiniteBtn.className = "p-2.5 rounded-2xl border-2 border-emerald-500/50 bg-emerald-800/20 text-white font-bold flex flex-col items-center text-center transition opacity-80";
+            });
+
+            wInfiniteBtn.addEventListener('click', () => {
+                playSound('click'); currentMode = 'infinite';
+                wInfiniteBtn.className = "p-2.5 rounded-2xl border-2 border-emerald-400 bg-emerald-800/60 text-white font-bold flex flex-col items-center text-center transition";
+                wMissionBtn.className = "p-2.5 rounded-2xl border-2 border-amber-500/50 bg-amber-500/20 text-white font-bold flex flex-col items-center text-center transition opacity-80";
+            });
+
+            document.getElementById('start-game-btn').addEventListener('click', () => {
+                playSound('click');
+                document.getElementById('welcome-modal').classList.add('hidden');
+
+                const tabMissionBtn = document.getElementById('tab-mission-btn');
+                const tabInfiniteBtn = document.getElementById('tab-infinite-btn');
+                const missionCtrls = document.getElementById('mission-controls');
+                const infiniteCtrls = document.getElementById('infinite-controls');
+
+                if (currentMode === 'mission') {
+                    tabMissionBtn.className = "px-2.5 py-1 rounded-lg transition bg-amber-500 text-amber-950 shadow";
+                    tabInfiniteBtn.className = "px-2.5 py-1 rounded-lg transition text-amber-200 hover:text-white";
+                    missionCtrls.classList.remove('hidden'); missionCtrls.classList.add('sm:flex');
+                    infiniteCtrls.classList.add('hidden');
+                } else {
+                    tabInfiniteBtn.className = "px-2.5 py-1 rounded-lg transition bg-amber-500 text-amber-950 shadow";
+                    tabMissionBtn.className = "px-2.5 py-1 rounded-lg transition text-amber-200 hover:text-white";
+                    infiniteCtrls.classList.remove('hidden'); infiniteCtrls.classList.add('flex');
+                    missionCtrls.classList.add('hidden');
+                }
+                loadLevel();
+            });
+
+            // Gameplay Tabs
+            const tabMissionBtn = document.getElementById('tab-mission-btn');
+            const tabInfiniteBtn = document.getElementById('tab-infinite-btn');
+            const missionCtrls = document.getElementById('mission-controls');
+            const infiniteCtrls = document.getElementById('infinite-controls');
+
+            tabMissionBtn.addEventListener('click', () => {
+                playSound('click'); currentMode = 'mission';
+                tabMissionBtn.className = "px-2.5 py-1 rounded-lg transition bg-amber-500 text-amber-950 shadow";
+                tabInfiniteBtn.className = "px-2.5 py-1 rounded-lg transition text-amber-200 hover:text-white";
+                missionCtrls.classList.remove('hidden'); missionCtrls.classList.add('sm:flex');
+                infiniteCtrls.classList.add('hidden');
+                loadLevel();
+            });
+
+            tabInfiniteBtn.addEventListener('click', () => {
+                playSound('click'); currentMode = 'infinite';
+                tabInfiniteBtn.className = "px-2.5 py-1 rounded-lg transition bg-amber-500 text-amber-950 shadow";
+                tabMissionBtn.className = "px-2.5 py-1 rounded-lg transition text-amber-200 hover:text-white";
+                infiniteCtrls.classList.remove('hidden'); infiniteCtrls.classList.add('flex');
+                missionCtrls.classList.add('hidden');
+                loadLevel();
+            });
+
+            document.querySelectorAll('.diff-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    playSound('click');
+                    infiniteDifficulty = e.target.dataset.diff;
+                    loadLevel();
+                });
+            });
+
+            document.getElementById('check-btn').addEventListener('click', checkAnswers);
+            document.getElementById('open-welcome-btn').addEventListener('click', () => {
+                playSound('click');
+                document.getElementById('welcome-modal').classList.remove('hidden');
+            });
+            document.getElementById('logo-btn').addEventListener('click', () => {
+                playSound('click');
+                document.getElementById('welcome-modal').classList.remove('hidden');
+            });
+
+            document.getElementById('audio-toggle-btn').addEventListener('click', () => {
+                soundMuted = !soundMuted;
+                document.getElementById('audio-icon').textContent = soundMuted ? '🔇' : '🔊';
+            });
+
+            document.getElementById('modal-retry-btn').addEventListener('click', () => {
+                hideVictoryModal(); loadLevel();
+            });
+            document.getElementById('modal-next-btn').addEventListener('click', () => {
+                hideVictoryModal();
+                if (currentMode === 'mission') currentMissionIdx = (currentMissionIdx + 1) % MISSION_LEVELS.length;
+                loadLevel();
+            });
+
+            // Virtual keypad
+            const keypadModal = document.getElementById('virtual-keypad');
+            document.getElementById('toggle-keypad-btn').addEventListener('click', () => {
+                playSound('click');
+                keypadModal.classList.toggle('hidden');
+            });
+            document.getElementById('close-keypad-btn').addEventListener('click', () => {
+                keypadModal.classList.add('hidden');
+            });
+
+            document.querySelectorAll('.keypad-num').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (activeInputCell && activeInputCell.element) {
+                        playSound('click');
+                        activeInputCell.element.value += btn.textContent;
+                        activeInputCell.element.dispatchEvent(new Event('input'));
+                    }
+                });
+            });
+
+            document.getElementById('keypad-del').addEventListener('click', () => {
+                if (activeInputCell && activeInputCell.element) {
+                    playSound('click');
+                    activeInputCell.element.value = activeInputCell.element.value.slice(0, -1);
+                    activeInputCell.element.dispatchEvent(new Event('input'));
+                }
+            });
+
+            document.getElementById('keypad-ok').addEventListener('click', () => {
+                playSound('click');
+                checkAnswers();
+            });
+
+            loadLevel();
+        });
+    </script>
+</body>
+</html>
